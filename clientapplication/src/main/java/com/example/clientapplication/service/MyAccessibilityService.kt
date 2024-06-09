@@ -34,28 +34,26 @@ class MyAccessibilityService: AccessibilityService() {
             addAction("com.example.clientapplication.DISCONNECT")
             addAction("com.example.clientapplication.CHANGECONFIG")
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            registerReceiver(broadcastReceiver, filter, RECEIVER_NOT_EXPORTED)
-        }
+        registerReceiver(broadcastReceiver, filter, RECEIVER_NOT_EXPORTED)
     }
 
     private fun createNotification(): Notification {
         val channelId = "my_accessibility_service_channel"
         val channelName = "My Accessibility Service"
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val chan =
-                NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_NONE)
+            val chan = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_NONE)
             val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             manager.createNotificationChannel(chan)
         }
 
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
-
-        return notificationBuilder.setOngoing(true)
+        val notification = notificationBuilder.setOngoing(true)
             .setContentTitle("Service is running in the background")
             .setPriority(NotificationCompat.PRIORITY_MIN)
             .setCategory(Notification.CATEGORY_SERVICE)
             .build()
+
+        return notification
     }
 
 
@@ -63,25 +61,25 @@ class MyAccessibilityService: AccessibilityService() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
                 "com.example.clientapplication.CONNECT" -> connectToServer()
-                "com.example.clientapplication.CHANGECONFIG" -> changeConfig(intent)
+                "com.example.clientapplication.CHANGECONFIG" -> changeConfig()
                 "com.example.clientapplication.DISCONNECT" -> disconnectFromServer()
             }
         }
     }
 
-    fun changeConfig(intent: Intent){
+    fun changeConfig(){
         Log.d("Service", "changeConfig()")
-        val ip = intent.getStringExtra("ip")
-        val port = intent.getStringExtra("port")
-        if (ip != null) {
-            this.ip = ip
-        }
-        if (port != null) {
-            this.port = port
-        }
-        if(webSocketClient == null){
-            webSocketClient = WebSocketClient(this, this.ip, this.port)
-        }
+//        val ip = intent.getStringExtra("ip")
+//        val port = intent.getStringExtra("port")
+//        if (ip != null) {
+//            this.ip = ip
+//        }
+//        if (port != null) {
+//            this.port = port
+//        }
+//        if(webSocketClient == null){
+//            webSocketClient = WebSocketClient(this, this.ip, this.port)
+//        }
     }
 
     fun connectToServer(){
@@ -111,12 +109,12 @@ class MyAccessibilityService: AccessibilityService() {
             val centerX = displayMetrics.widthPixels / 2f
             when (direction) {
                 "up" -> {
-                    val endY = 0f.coerceAtLeast(centerY - length)
+                    val endY = Math.max(0f, centerY - length)
                     moveTo(centerX, centerY)
                     lineTo(centerX, endY)
                 }
                 "down" -> {
-                    val endY = displayMetrics.heightPixels.toFloat().coerceAtMost(centerY + length)
+                    val endY = Math.min(displayMetrics.heightPixels.toFloat(), centerY + length)
                     moveTo(centerX, centerY)
                     lineTo(centerX, endY)
                 }

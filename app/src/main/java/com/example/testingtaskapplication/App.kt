@@ -1,4 +1,4 @@
-package com.example.testingtaskapplication.di
+package com.example.testingtaskapplication
 
 import android.app.Application
 import com.example.testingtaskapplication.database.MainDb
