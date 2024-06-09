@@ -17,6 +17,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.example.clientapplication.websocket.WebSocketClient
 
+
 class MyAccessibilityService: AccessibilityService() {
     private var webSocketClient: WebSocketClient? = null
     private var ip: String = "192.168.1.236"
@@ -61,25 +62,25 @@ class MyAccessibilityService: AccessibilityService() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
                 "com.example.clientapplication.CONNECT" -> connectToServer()
-                "com.example.clientapplication.CHANGECONFIG" -> changeConfig()
+                "com.example.clientapplication.CHANGECONFIG" -> changeConfig(intent)
                 "com.example.clientapplication.DISCONNECT" -> disconnectFromServer()
             }
         }
     }
 
-    fun changeConfig(){
+    fun changeConfig(intent: Intent){
         Log.d("Service", "changeConfig()")
-//        val ip = intent.getStringExtra("ip")
-//        val port = intent.getStringExtra("port")
-//        if (ip != null) {
-//            this.ip = ip
-//        }
-//        if (port != null) {
-//            this.port = port
-//        }
-//        if(webSocketClient == null){
-//            webSocketClient = WebSocketClient(this, this.ip, this.port)
-//        }
+        val ip = intent.getStringExtra("ip")
+        val port = intent.getStringExtra("port")
+        if (ip != null) {
+            this.ip = ip
+        }
+        if (port != null) {
+            this.port = port
+        }
+        if(webSocketClient == null){
+            webSocketClient = WebSocketClient(this, this.ip, this.port)
+        }
     }
 
     fun connectToServer(){
