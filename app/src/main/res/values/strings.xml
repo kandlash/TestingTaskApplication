@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">TestingTaskApplication</string>
+    <string name="app_name">ServerApplication</string>
     <string name="title_activity_log">LogActivity</string>
 </resources>

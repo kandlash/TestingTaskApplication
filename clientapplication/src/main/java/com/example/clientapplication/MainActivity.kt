@@ -1,9 +1,6 @@
 package com.example.clientapplication
 
-import android.app.NotificationManager
-import com.example.clientapplication.websocket.WebSocketClient
 import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -32,9 +29,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import com.example.clientapplication.service.MyAccessibilityService
 import com.example.clientapplication.ui.theme.TestingTaskApplicationTheme
-import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
-
 
 class MainActivity : ComponentActivity() {
     private var myAccessibilityServiceIntent: Intent? = null
@@ -144,8 +138,8 @@ fun MyScreen(
     val portInput = remember { mutableStateOf("8081") }
 
     fun updateConnectionConfig() {
-        val ip = ipInput.value.toString()
-        val port = portInput.value.toString()
+        val ip = ipInput.value
+        val port = portInput.value
         onConfigChanged(ip, port)
         openDialog.value = false
     }

@@ -2,7 +2,6 @@ package com.example.clientapplication.service
 
 import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.GestureDescription
-import android.app.ActivityManager
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -16,12 +15,7 @@ import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
-import com.example.clientapplication.MainActivity
 import com.example.clientapplication.websocket.WebSocketClient
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 class MyAccessibilityService: AccessibilityService() {
     private var webSocketClient: WebSocketClient? = null
@@ -40,26 +34,28 @@ class MyAccessibilityService: AccessibilityService() {
             addAction("com.example.clientapplication.DISCONNECT")
             addAction("com.example.clientapplication.CHANGECONFIG")
         }
-        registerReceiver(broadcastReceiver, filter, RECEIVER_NOT_EXPORTED)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(broadcastReceiver, filter, RECEIVER_NOT_EXPORTED)
+        }
     }
 
     private fun createNotification(): Notification {
         val channelId = "my_accessibility_service_channel"
         val channelName = "My Accessibility Service"
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val chan = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_NONE)
+            val chan =
+                NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_NONE)
             val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             manager.createNotificationChannel(chan)
         }
 
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
-        val notification = notificationBuilder.setOngoing(true)
+
+        return notificationBuilder.setOngoing(true)
             .setContentTitle("Service is running in the background")
             .setPriority(NotificationCompat.PRIORITY_MIN)
             .setCategory(Notification.CATEGORY_SERVICE)
             .build()
-
-        return notification
     }
 
 
@@ -115,12 +111,12 @@ class MyAccessibilityService: AccessibilityService() {
             val centerX = displayMetrics.widthPixels / 2f
             when (direction) {
                 "up" -> {
-                    val endY = Math.max(0f, centerY - length)
+                    val endY = 0f.coerceAtLeast(centerY - length)
                     moveTo(centerX, centerY)
                     lineTo(centerX, endY)
                 }
                 "down" -> {
-                    val endY = Math.min(displayMetrics.heightPixels.toFloat(), centerY + length)
+                    val endY = displayMetrics.heightPixels.toFloat().coerceAtMost(centerY + length)
                     moveTo(centerX, centerY)
                     lineTo(centerX, endY)
                 }

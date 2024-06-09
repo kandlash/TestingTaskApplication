@@ -20,5 +20,5 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "TestingTaskApplication"
-include(":app")
+include(":server")
 include(":clientapplication")

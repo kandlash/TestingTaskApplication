@@ -5,7 +5,6 @@ import android.os.Bundle
 
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,23 +20,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.testingtaskapplication.database.MainDb
 import com.example.testingtaskapplication.server.WebsocketServer
 import com.example.testingtaskapplication.ui.theme.TestingTaskApplicationTheme
 import dagger.hilt.android.AndroidEntryPoint
-import io.ktor.server.application.*
-import io.ktor.server.websocket.*
-import io.ktor.server.engine.*
 import kotlinx.coroutines.DelicateCoroutinesApi
 import javax.inject.Inject
-import kotlin.properties.Delegates
 
 
 @DelicateCoroutinesApi
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private val viewModel: MainViewModel by viewModels()
 
     @Inject
     lateinit var server: WebsocketServer
