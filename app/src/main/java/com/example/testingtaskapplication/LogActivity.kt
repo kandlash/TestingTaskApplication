@@ -34,11 +34,14 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.testingtaskapplication.database.LogItem
 import com.example.testingtaskapplication.database.MainDb
 import com.example.testingtaskapplication.ui.theme.TestingTaskApplicationTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class LogActivity : ComponentActivity() {
+    private val viewModel: MainViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val viewModel: MainViewModel by viewModels { MainViewModel.factory}
         setContent {
             TestingTaskApplicationTheme {
                 Surface(
@@ -49,7 +52,7 @@ class LogActivity : ComponentActivity() {
                     LazyColumn(
                         contentPadding = PaddingValues(all = 12.dp)
                     ) {
-                        items(itemList.value){
+                        items(itemList.value) {
                             CustomLogItem(logItem = LogItem(it.id, it.date, it.logText))
                         }
                     }

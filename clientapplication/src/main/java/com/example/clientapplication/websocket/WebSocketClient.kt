@@ -1,5 +1,6 @@
 package com.example.clientapplication.websocket
 
+import android.os.Build
 import android.util.Log
 import com.example.clientapplication.service.GestureParams
 import com.example.clientapplication.service.MyAccessibilityService
@@ -72,11 +73,13 @@ class WebSocketClient(private val myAccessibilityService: MyAccessibilityService
     }
 
     fun sendMessage(isDispatched: Boolean) {
-        Log.d("connect", "connect is send message on $ip:$port")
         CoroutineScope(Dispatchers.IO).launch {
             var session: DefaultClientWebSocketSession? = null
             try {
-                val message = if (isDispatched) "Gesture was dispatched!" else "Gesture wasn't dispatched!"
+                val deviceModel = Build.MANUFACTURER + " " + Build.MODEL
+
+                val message = if (isDispatched) "Gesture was dispatched! Device model: $deviceModel" else "Gesture wasn't dispatched! Device model: $deviceModel"
+
                 client!!.webSocket(method = HttpMethod.Get, host = ip, port = port.toInt(), path = "/writeGestureDispatch") {
                     send(Frame.Text(message))
                     session = this

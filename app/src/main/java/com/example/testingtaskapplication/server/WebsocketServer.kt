@@ -26,8 +26,15 @@ import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Date
+import javax.inject.Inject
+import javax.inject.Singleton
+
 @DelicateCoroutinesApi
-class WebsocketServer(private val context: Context, private val db: MainDb) {
+@Singleton
+class WebsocketServer @Inject constructor(
+    private val context: Context,
+    private val db: MainDb
+) {
     private var port: Int = 8081
     private var server: ApplicationEngine? = null
 
@@ -49,8 +56,8 @@ class WebsocketServer(private val context: Context, private val db: MainDb) {
                     }
                 }
                 routing {
-                    webSocket ("/writeGestureDispatch"){
-                        while(true){
+                    webSocket("/writeGestureDispatch") {
+                        while (true) {
                             val frame = incoming.receive()
                             if (frame is Frame.Text) {
                                 Log.d("SERVER", "Got dispatch message: " + frame.readText())
@@ -58,8 +65,8 @@ class WebsocketServer(private val context: Context, private val db: MainDb) {
                                 val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
                                 val dateString = currentDate.format(formatter)
 
-                                val logItem = LogItem(id=null, date=dateString, logText = frame.readText())
-                                Thread{
+                                val logItem = LogItem(id = null, date = dateString, logText = frame.readText())
+                                Thread {
                                     db.getDao().insertLogItem(logItem)
                                 }.start()
                             }
@@ -70,8 +77,7 @@ class WebsocketServer(private val context: Context, private val db: MainDb) {
                 engine.start()
             }
             withContext(Dispatchers.Main) {
-                Toast.makeText(context, "Server is running on port: $port!",
-                    Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Server is running on port: $port!", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -81,24 +87,20 @@ class WebsocketServer(private val context: Context, private val db: MainDb) {
         server = null
         GlobalScope.launch {
             withContext(Dispatchers.Main) {
-                Toast.makeText(context, "Server has been stopped!",
-                    Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Server has been stopped!", Toast.LENGTH_SHORT).show()
             }
         }
-
     }
 
     fun updatePort(newPort: Int) {
-        if(server != null){
+        if (server != null) {
             stop()
         }
         port = newPort
         GlobalScope.launch {
             withContext(Dispatchers.Main) {
-                Toast.makeText(context, "Server's port was changed to: $port",
-                    Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Server's port was changed to: $port", Toast.LENGTH_SHORT).show()
             }
         }
     }
-
 }

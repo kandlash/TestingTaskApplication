@@ -30,35 +30,37 @@ import io.ktor.server.application.*
 import io.ktor.server.websocket.*
 import io.ktor.server.engine.*
 import kotlinx.coroutines.DelicateCoroutinesApi
+import javax.inject.Inject
 import kotlin.properties.Delegates
 
 
 @DelicateCoroutinesApi
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private val viewModel: MainViewModel by viewModels { MainViewModel.factory}
+    private val viewModel: MainViewModel by viewModels()
 
-    private var server: WebsocketServer? = null
+    @Inject
+    lateinit var server: WebsocketServer
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val db = viewModel.database
-        server = WebsocketServer(this, db)
         setContent {
             TestingTaskApplicationTheme {
                 ServerControlButtons(
-                    onStartClick = { server?.start() },
-                    onStopClick = { server?.stop() },
+                    onStartClick = { server.start() },
+                    onStopClick = { server.stop() },
                     onConfigClick = {
                         if (it != null) {
-                            server?.updatePort(it)
+                            server.updatePort(it)
                         }
                     },
-                    onLogsClick = {openLogs()}
+                    onLogsClick = { openLogs() }
                 )
             }
         }
     }
 
-    private fun openLogs(){
+    private fun openLogs() {
         val intent = Intent(this, LogActivity::class.java)
         startActivity(intent)
     }
@@ -79,7 +81,7 @@ fun ServerControlButtons(
         val port = portInput.value.toIntOrNull()
         onConfigClick(port)
         openDialog.value = false
-        if(isServerRunning.value){
+        if (isServerRunning.value) {
             isServerRunning.value = false
         }
     }
@@ -115,7 +117,7 @@ fun ServerControlButtons(
             Text("Config")
         }
 
-        Button(onClick ={onLogsClick()}){
+        Button(onClick = { onLogsClick() }) {
             Text("Logs")
         }
     }

@@ -6,19 +6,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.testingtaskapplication.database.MainDb
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class MainViewModel(val database: MainDb) : ViewModel() {
+@HiltViewModel
+class MainViewModel @Inject constructor(val database: MainDb) : ViewModel() {
     val itemsList = database.getDao().getAllLogItems()
-
-    companion object{
-        val factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory{
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(
-                modelClass: Class<T>,
-                extras: CreationExtras): T {
-                val database = (checkNotNull(extras[APPLICATION_KEY]) as App).db
-                return MainViewModel(database) as T
-            }
-        }
-    }
 }
