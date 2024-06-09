@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">TestingTaskApplication</string>
+    <string name="title_activity_log">LogActivity</string>
+</resources>
